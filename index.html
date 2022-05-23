@@ -1,0 +1,79 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous" defer></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+
+    </head>
+    <body>
+        <nav class="navbar navbar-light bg-light">
+            <div class="container">
+                <span class="navbar-brand mb-0 h1 ml-5 mr-auto">Memories</span>
+            </div>
+        </nav>
+        <div class="container mt-5 d-grid gap-3">
+            <div>
+                <label for="rnDayScore" class="form-label">How was your day?</label>
+                <input type="range" min="0" max="10" value="5" step="1" class="form-range" id="rnDayScore">
+            </div>
+            <div>
+                <label for="rnMoodScore" class="form-label">How is your mood?</label>
+                <input type="range" min="0" max="10" value="5" step="1" class="form-range" id="rnMoodScore">
+            </div>
+            <div>
+                <label for="rnHealthScore" class="form-label">How is your health?</label>
+                <input type="range" min="0" max="10" value="5" step="1" class="form-range" id="rnHealthScore">
+            </div>
+            <div>
+                <label for="txOneLine" class="form-label">Describe your day?</label>
+                <input type="text" class="form-control" id="txOneLine">
+            </div>
+            <div class="d-grid gap-2 mt-3">
+                <button class="btn btn-success" onclick="putMemory()" type="button">Save</button>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                if(getCookie("access_token")== null){
+                    window.location.replace("/login.html");
+                }
+            });
+            function putMemory(){
+                var day_rating= $("#rnDayScore").val();
+                var mood_rating= $("#rnMoodScore").val();
+                var health_rating= $("#rnHealthScore").val();
+                var day_line= $("#txOneLine").val();
+
+                const memory= {
+                    day_rating: day_rating,
+                    mood_rating: mood_rating,
+                    health_rating: health_rating,
+                    day_line: day_line
+                }
+                console.log(memory);
+                var settings = {
+                    "url": "http://localhost:5001/memories",
+                    "method": "PUT",
+                    "timeout": 0,
+                    "headers": {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer "+getCookie("access_token") 
+                    },
+                    "data": JSON.stringify(memory),
+                };
+
+                $.ajax(settings).done(function (response) {
+                    console.log(response);
+                    window.location.replace("http://localhost:3000/timeline.html");
+                });
+            }
+
+            function getCookie(key) {
+                var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
+                return keyValue ? keyValue[2] : null;
+            }
+
+        </script>
+    </body>
+</html>
